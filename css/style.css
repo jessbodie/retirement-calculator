@@ -1,0 +1,193 @@
+* {
+  border: 0px solid rgba(0, 0, 0, 0.9);
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+
+body {
+  background-color: #F7F7F7;
+  font-family: 'Montserrat', sans-serif;
+  font-style: normal;
+  border-top: 16px solid #696E7B;
+}
+
+p {
+     margin-bottom: 1em;
+}
+
+a {
+  text-decoration: none;
+  color: #696E7B;
+}
+
+a:hover {
+     color: #066e84;
+}
+
+h1 {
+  font-size: 2em;
+  font-weight: 500;
+  color: #21BFE1;
+  padding-left: 0rem;
+  padding-top: 0rem;
+  margin-top: 0rem;
+  margin-bottom: 0.2em;
+  line-height: normal;
+  width: 100%;
+}
+
+.rule {
+     width: 100%;
+     border-top: 2px solid #bdc0c9;
+}
+
+.container {
+     padding: 1em;
+     display: flex;
+     flex-direction: column;
+     flex-wrap: wrap;
+     justify-content: space-around;
+     align-items: center;
+     align-content: space-between;
+     padding: 1em 2em;
+     list-style: none;
+     max-width: 600px;
+     margin: auto;
+}
+
+.normal {
+     width: 100%;
+     line-height: 140%;
+     margin-top: 1em;
+     font-size: .9em;
+     color: #3B3F47;
+
+}
+
+form {
+     display: block;
+     width: 80%;
+     margin: auto;
+     padding: 0;
+     margin: 0;
+}
+
+ol {
+     display: grid;
+     grid-template-columns: auto 80px;
+     grid-template-rows: repeat(6, auto);
+     grid-auto-flow: row;
+     grid-column-gap: 1em;
+     grid-row-gap: 1em;
+     justify-items: stretch;
+     align-items: start;
+     justify-content: space-between;
+     align-content: start;
+     width: 100%;
+     margin: 0;
+     padding: 0;
+     list-style-type: none;
+     counter-reset: li;
+}
+
+li {
+     counter-increment: li;
+}
+
+li::before {
+/*Thanks to great article on coloring numbers differently:*/
+/*https://www.w3.org/Style/Examples/007/color-bullets.en.html*/
+     content: counter(li)". ";
+     margin-left: -1.5em;
+     margin-right: 0.5em;
+     color: #21BFE1;
+     display: inline;
+     text-align: right;
+     direction: rtl;
+}
+
+
+.question-text {
+     font-size: 1.15em;
+     line-height: 150%;
+     grid-column: 1 / 2;
+     border: 0px solid yellow;
+     color: #3B3F47;
+
+}
+
+.entry-box {
+     grid-column: 2 / 3;
+     border: 0px solid blue;
+}
+
+.blue {
+     color: #21BFE1;
+     display: inline-flex;
+}
+
+input {
+     line-height: normal;
+     border-radius: 2px;
+     font-size: 1em;
+     padding: 0.2em .5em;
+     font-family: 'Montserrat', sans-serif;
+     font-style: normal;
+     box-shadow: 0 0 0 1px #bdc0c9;
+}
+
+input[type=text] {
+     background-color:white;
+     float:right;
+     box-shadow: 0 0 0 1px #bdc0c9;
+}
+
+input[type=text]:focus {
+     box-shadow: 0 0 0 1.5px #066e84;
+     outline: none;
+}
+
+input[type=button] {
+     background-color:#21BFE1;
+     color: white;
+     transition: .5s;
+     grid-column: span 2;
+     width: 50%;
+     justify-self: center;
+     outline: none;
+     box-shadow: 0 0 0 0;
+}
+
+input[type=button]:hover {
+     background-color:#066e84;
+}
+
+ol {
+     display: inline-grid;
+}
+
+
+
+
+.results {
+     width: 100%;
+     margin-top: 1em;
+     font-size: 1.15em;
+     line-height: 150%;
+     color: #3B3F47;
+     display: block;
+
+}
+
+
+
+footer {
+     font-size: 0.75em;
+     margin-top: 4em;
+     padding-top: .5em;
+     padding-bottom: 1em;
+     border-top: 1px solid #bdc0c9;
+
+}
