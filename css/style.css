@@ -30,12 +30,20 @@ h1 {
   font-size: 2em;
   font-weight: 500;
   color: #21BFE1;
-  padding-left: 0rem;
-  padding-top: 0rem;
-  margin-top: 0rem;
+  padding-left: 0em;
+  padding-top: 0em;
+  margin-top: 0em;
   margin-bottom: 0.2em;
   line-height: normal;
   width: 100%;
+}
+
+h2 {
+     font-size: 1.5;
+     font-weight: 500;
+     color: #21BFE1;
+     margin-top: 1em;
+     margin-bottom: 0.3em;
 }
 
 .rule {
@@ -66,6 +74,16 @@ h1 {
 
 }
 
+.normal ul {
+     list-style: none;
+     margin-left: 2em;
+     margin-bottom: 1.5em;
+}
+
+.normal li {
+     margin-bottom: .5em;
+}
+
 form {
      display: block;
      width: 80%;
@@ -92,11 +110,11 @@ ol {
      counter-reset: li;
 }
 
-li {
+.question-text li {
      counter-increment: li;
 }
 
-li::before {
+.question-text li::before {
 /*Thanks to great article on coloring numbers differently:*/
 /*https://www.w3.org/Style/Examples/007/color-bullets.en.html*/
      content: counter(li)". ";
