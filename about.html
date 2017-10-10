@@ -23,7 +23,10 @@
 <h1>About the Retirement Calculator</h1>
 
 <div class="normal">
-     <p> After completing my MBA coursework, I tried to figure out how much my husband and I should be saving for our retirement each year. The calculators online are all very involved and often asked for irrelevant data.  The Practical Retirement Calculator allows one to determine a rough approximation of how much money to save each year for retirement.</p>
+     <p>The Practical Retirement Calculator allows one to determine a rough approximation of how much money to save each year for retirement.</p>
+     <h2>The Background</h2>
+     <p>After completing my MBA coursework, I tried to figure out how much I should be saving for  retirement each year. The calculators online are all very involved and often ask for irrelevant details.  In 2013, I designed and developed my own Retirement Calculator: first as an Excel sheet and then as an <a href="">Android app</a>. Now, I've ported the Practical Retirement Calculator to JavaScript so it is available online.</p>
+     <h2>The How</h2>
      <p>First, I extrapolated the amount of money required for each year of retirement, using the FV formula and these inputs:</p>
      <ul>
           <li>rate = 3.3% - Average rate of inflation over last century<sup><a href="http://www.tradingeconomics.com/united-states/inflation-cpi">1</a></sup></li>
@@ -37,19 +40,19 @@
      <p>Next, I calculated how much I would need at the outset of retirement  to pay for these projected  annual costs, assuming that 1) my portfolio would grow at an average rate and 2) I would make one payment for all annual costs at the end of each year. Therefore, I used the PV formula  and these inputs:</p>
      <ul>
           <li>periods = Number of years between retirement and death</li>
-          <li>rate = 7.3% - Average rate of growth of 30% stock, 70% bonds portfolio over last 90 years<sup><a href="https://personal.vanguard.com/us/insights/saving-investing/model-portfolio-allocations">2</a></sup></li>
+          <li>rate = 7.3% - Average rate of growth from last 90 years of a 30% stock, 70% bonds portfolio <sup><a href="https://personal.vanguard.com/us/insights/saving-investing/model-portfolio-allocations">2</a></sup></li>
           <li>PMT = Prior year's annual costs</li>
           <li>FV = 0</li>
           <li>PV = These calculations are in "Program" > Column M.</li>
      </ul>
 
-     <p>Finally, I used the amount required at the outset of retirement to calculate required annual payments save for retirement. I used the PMT formula and these inputs:</p>
+     <p>Finally, I used the amount required at the outset of retirement to calculate the required annual payments needed to save for retirement. I used the PMT formula and these inputs:</p>
      <ul>
-          <li>Periods = Number of years between now and retirement</li>
-          <li>Rate = Average income portfolio growth (7.3%)</li>
+          <li>periods = Number of years between now and retirement</li>
+          <li>rate = 7.3% - Average rate of growth<sup><a href="https://personal.vanguard.com/us/insights/saving-investing/model-portfolio-allocations">3</a></sup></li>
           <li>FV =  negative of amount required at the outset of retirement</li>
           <li>PV = Current amount  saved</li>
-          <li>This calculation appears in "Program"  Cell C16.</li>
+          <li>PMT = This calculation appears in "Program"  Cell C16.</li>
      </ul>
           
 </div>
