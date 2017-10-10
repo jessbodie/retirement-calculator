@@ -10,7 +10,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <noscript>Please enable JavaScript!</noscript>
-  <!-- TODO Begin Favicon, from https://realfavicongenerator.net -->
+  <!-- Favicon generated from https://realfavicongenerator.net/ -->
+  <link rel="apple-touch-icon" sizes="180x180" href="img/favicons/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="img/favicons/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="img/favicons/favicon-16x16.png">
+  <link rel="manifest" href="img/favicons/manifest.json">
+  <link rel="mask-icon" href="img/favicons/safari-pinned-tab.svg" color="#5bbad5">
+  <link rel="shortcut icon" href="img/favicons/favicon.ico">
+  <meta name="msapplication-config" content="img/favicons/browserconfig.xml">
+  <meta name="theme-color" content="#ffffff">
   
 </head>
 <body>
@@ -25,7 +33,7 @@
 <div class="normal">
      <p>The Practical Retirement Calculator allows one to determine a rough approximation of how much money to save each year for retirement.</p>
      <h2>The Background</h2>
-     <p>After completing my MBA coursework, I tried to figure out how much I should be saving for  retirement each year. The calculators online are all very involved and often ask for irrelevant details.  In 2013, I designed and developed my own Retirement Calculator: first as an Excel sheet and then as an <a href="">Android app</a>. Now, I've ported the Practical Retirement Calculator to JavaScript so it is available online.</p>
+     <p>After completing my MBA coursework, I tried to figure out how much I should be saving for  retirement each year. The calculators online are all very involved and often ask for irrelevant details.  In 2013, I designed and developed my own Retirement Calculator: first as an Excel sheet and then as an <a href="/~ianr/apk/RetirementCalculator.apk">Android app</a>. Now, I've ported the Practical Retirement Calculator to JavaScript so it is available online.</p>
      <h2>The How</h2>
      <p>First, I extrapolated the amount of money required for each year of retirement, using the FV formula and these inputs:</p>
      <ul>
@@ -42,8 +50,8 @@
           <li>periods = Number of years between retirement and death</li>
           <li>rate = 7.3% - Average rate of growth from last 90 years of a 30% stock, 70% bonds portfolio <sup><a href="https://personal.vanguard.com/us/insights/saving-investing/model-portfolio-allocations">2</a></sup></li>
           <li>PMT = Prior year's annual costs</li>
-          <li>FV = 0</li>
-          <li>PV = These calculations are in "Program" > Column M.</li>
+          <li>FV = See above</li>
+          <li>PV = &Sigma;(((1 + rateReturn)<sup>-1</sup> * FV * rate - PMT + (1 + rateReturn)<sup>1</sup> * PMT) / rate)</li>
      </ul>
 
      <p>Finally, I used the amount required at the outset of retirement to calculate the required annual payments needed to save for retirement. I used the PMT formula and these inputs:</p>
@@ -52,7 +60,7 @@
           <li>rate = 7.3% - Average rate of growth<sup><a href="https://personal.vanguard.com/us/insights/saving-investing/model-portfolio-allocations">3</a></sup></li>
           <li>FV =  negative of amount required at the outset of retirement</li>
           <li>PV = Current amount  saved</li>
-          <li>PMT = This calculation appears in "Program"  Cell C16.</li>
+          <li>PMT = (-1 * rate * (FV + (1 + rate<sup>periods</sup>) * PV)) / ((1 + rate<sup>periods</sup>) - 1)</li>
      </ul>
           
 </div>
