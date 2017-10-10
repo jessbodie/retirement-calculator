@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+  <title>Practical Retirement Calculator - About</title>
+  <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
+  <link rel="stylesheet" type="text/css" href="css/style.css">
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="description" content="Description and assumptions of the Retirement Calculator for quick estimate of necessary annual and monthly savings">
+  <meta name="robots" content="index, follow">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <noscript>Please enable JavaScript!</noscript>
+  <!-- TODO Begin Favicon, from https://realfavicongenerator.net -->
+  
+</head>
+<body>
+
+<div class="rule"></div>
+
+<div class="container">
+     
+     
+<h1>About the Retirement Calculator</h1>
+
+<div class="normal">
+     <p> After completing my MBA coursework, I tried to figure out how much my husband and I should be saving for our retirement each year. The calculators online are all very involved and often asked for irrelevant data.  The Practical Retirement Calculator allows one to determine a rough approximation of how much money to save each year for retirement.</p>
+     <p>First, I extrapolated the amount of money required for each year of retirement, using the FV formula and these inputs:</p>
+     <ul>
+          <li>rate = 3.3% - Average rate of inflation over last century<sup><a href="http://www.tradingeconomics.com/united-states/inflation-cpi">1</a></sup></li>
+          <li>periods = Difference between now and each year of retirement</li>
+          <li>PV = This year's annual costs</li>
+          <li>FV = PV * (1 + rate)<sup>periods</sup></li>
+     </ul>
+
+     
+     
+     <p>Next, I calculated how much I would need at the outset of retirement  to pay for these projected  annual costs, assuming that 1) my portfolio would grow at an average rate and 2) I would make one payment for all annual costs at the end of each year. Therefore, I used the PV formula  and these inputs:</p>
+     <ul>
+          <li>periods = Number of years between retirement and death</li>
+          <li>rate = 7.3% - Average rate of growth of 30% stock, 70% bonds portfolio over last 90 years<sup><a href="https://personal.vanguard.com/us/insights/saving-investing/model-portfolio-allocations">2</a></sup></li>
+          <li>PMT = Prior year's annual costs</li>
+          <li>FV = 0</li>
+          <li>PV = These calculations are in "Program" > Column M.</li>
+     </ul>
+
+     <p>Finally, I used the amount required at the outset of retirement to calculate required annual payments save for retirement. I used the PMT formula and these inputs:</p>
+     <ul>
+          <li>Periods = Number of years between now and retirement</li>
+          <li>Rate = Average income portfolio growth (7.3%)</li>
+          <li>FV =  negative of amount required at the outset of retirement</li>
+          <li>PV = Current amount  saved</li>
+          <li>This calculation appears in "Program"  Cell C16.</li>
+     </ul>
+          
+</div>
+
+
+<footer><a href="index.html">Practical Retirement Calculator</a> designed and developed by <a href="http://jessbodierichards.com">Jess Bodie Richards</a>. Copyright &copy;2017 by <a href="http://jessbodierichards.com">Jess Bodie Richards</a>. All rights reserved.
+</footer>
+</div>
+
+<script src="js/index.js"></script>
+
+
+</body>
+
+</html>
