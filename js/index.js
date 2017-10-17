@@ -7,7 +7,6 @@ function eventListeners() {
      document.addEventListener('DOMContentLoaded', testData);
      document.getElementById('calculate').addEventListener('click', captureData);
      document.getElementById('calculate').addEventListener('click', secondaryListeners);
-     document.getElementById('calculate').addEventListener('click', addErrorDiv);
      // TODO Add Enter key to mimic Calculate button
 
 }
@@ -21,85 +20,94 @@ function secondaryListeners() {
 }
 
 
-
+// Capture data user entered and  error handling
 function captureData() {
-     // Capture data user entered and error handling
-     let age = document.getElementById('age').value;
-     if (!isValidAge(age)) {
-          alert("Please enter your age.");
-     }
      
-     let ageRetire = document.getElementById('age-retire').value;
-     if (!isValidAge(ageRetire)) {
-          document.getElementById('age-retire').value = 65;
-     }
-          
-     let ageDeath = document.getElementById('age-death').value;
-     if (!isValidAge(ageDeath)) {
-          document.getElementById('age-death').value = 85;
-     }
-          
-     let saved = document.getElementById('saved').value;
-     // ASK IAN ABOUT THESE IF STATEMENTS
-     if (!isValidAmount(saved)) {
-          document.getElementById('saved').value = '$0';
-     }
-          
-     let expenses = document.getElementById('expenses').value;
-     if (!isValidAmount(expenses)) {
-          alert("Please add your approximate annual expenses.");
-     }
-     
-     var newDiv = document.createElement("div");
-     
-     switch (true) {
-          case (age > ageRetire):
-               var testoo = document.querySelector('.question-text').appendChild('<div class="error"><b>butt</b></div>');
-               newDiv.appendChild(document.createTextNode("So much testing"));
-               console.log("Uh oh, looks like there's something funny about your current and retirement ages. Please take a look.");
-          case (ageRetire > ageDeath):
-               // alert("Doah! Please check your retirement age or life expectancy.");
-               document.getElementById('age-retire').innerHTML = '</input><div class="error">ageretire</div>';
-
-          case (saved < 0):
-               alert("Hmmm, something's not right with how much you currently have saved. Please take a look.");
-
-          case (expenses < 0):
-               alert("Yikes... something's not rightwith your approximate expenses. Please check.");
-          default:
-               {
-               console.log(`Your age is ${age}. You will retire at ${ageRetire}. You will die at ${ageDeath}. You have ${saved} saved for retirement. You have ${expenses} in expenses.`);
-               calculate(age, ageRetire, ageDeath, saved, expenses);
+     // Object to store for each input
+     function Inputs(val, elementID, errorMessage, isValid) {
+          this.val = val;
+          this.elementID = elementID;
+          this.errorMessage = errorMessage;
+          this.isValidNum = function isValidNum () {
+               // Basic validation, to return numbers
+               if ((this.val) && (this.val >= 0)) {
+                    this.val = this.val.replace(/[\-|&;\$%@"<>\(\)\+,]/g, '');
+                    parseFloat(this.val);
+                    return this.val;
+               } else {
+                    return false;
+               }
           }
-     }
+          this.addErrorDiv = function addErrorDiv () {
+               console.log("called");
+               // Create new div with error text
+               var errorDiv = document.createElement('div');
+               errorDiv.className = ('error');
+               var errorMessDiv = document.createTextNode(this.errorMessage);
+               errorDiv.appendChild(errorMessDiv); //add the text node to the newly created div.
+          
+               // Place new error div under corresponding field
+               var errorDivCurrent = document.getElementById(this.elementID).parentNode.parentNode;
+               var errorDivNext = document.getElementById(this.elementID).parentNode.nextElementSibling;
+               errorDivCurrent.insertBefore(errorDiv, errorDivNext);
+          }
+     };
+               
+     
+     // Data for each input including customized error messages
+     var ageObj = new Inputs(document.getElementById('age').value, 'age', 'Hmm, looks like you entered an unexpected age... please take a look and try again.');
+     
+     var retireObj = new Inputs(document.getElementById('age-retire').value, 'age-retire', 'Zoikes! This calculator is optimized for folks who will retire in the future. Please check the ages you input.');
 
-     // TODO More error checking?: return str.replace (/^\s+|\s+$/g, '');
+     var deathObj = new Inputs(document.getElementById('age-death').value, 'age-death', 'Oh man... This calculator expects you will die AFTER you retire. Please double-check the ages you input.');
 
-}
+     var savedObj = new Inputs(document.getElementById('saved').value, 'saved', 'Whohee, please enter a number... we\'re realistic. We know the amount might be a goose egg.');
 
+     var expensesObj = new Inputs(document.getElementById('expenses').value, 'expenses', 'Yowza! We\'re expecting your expenses will be AT LEAST  $6,000 per year... Please try again.');
+     
 
-function addErrorDiv () {
      clearError();
      
-     // Create new div with error text
-     var errorDiv = document.createElement('div');
-     errorDiv.className = ('error');
-     var errorMessage = document.createTextNode('WORK WORK');
-     errorDiv.appendChild(errorMessage); //add the text node to the newly created div.
+     // Check if data in each input box is present and valid
+     // Then, calculate the result
 
-     // Place new error div under corresponding field
-     var errorDivCurrent = document.getElementById('saved').parentNode.parentNode;
-     var errorDivNext = document.getElementById('saved').parentNode.nextElementSibling;
-     errorDivCurrent.insertBefore(errorDiv, errorDivNext);
+     if (!ageObj.isValidNum()) {
+          console.log(ageObj.errorMessage);
+          ageObj.addErrorDiv();
+          hideResults();
+     } else if (!retireObj.isValidNum() || (ageObj.val > retireObj.val)) {
+          console.log(retireObj.errorMessage);
+          retireObj.addErrorDiv();
+          hideResults();
+     } else if (!deathObj.isValidNum() || (retireObj.val > deathObj.val)) {
+          console.log(deathObj.errorMessage);
+          deathObj.addErrorDiv();
+          hideResults();
+     } else if (!expensesObj.isValidNum() || (expensesObj.val < 6000)) {
+          console.log(expensesObj.errorMessage);
+          expenseObj.addErrorDiv();
+          hideResults();
+     } else if (!savedObj.isValidNum()) {
+          console.log(savedObj.errorMessage);
+          savedObj.addErrorDiv();
+          hideResults();
+     
+     } else {
+          console.log(`Age: ${ageObj.val}. Retirement: ${retireObj.val}. Life expectancy: ${deathObj.val}. Saved: ${savedObj.val}. Expenses: ${expensesObj.val}.`);
+          calculate(ageObj.val, retireObj.val, deathObj.val, savedObj.val, expensesObj.val);
+     }
 }
+
 
 // Clear previously shown errors
 function clearError () {
+     console.log("clear error");
      var errorList = document.querySelectorAll('.error');
      for (var i = 0; i < errorList.length; i++) {
           errorList[i].remove();
      }
 }
+
 
 
 function calculate (age, ageRetire, ageDeath, saved, expenses) {
@@ -137,31 +145,15 @@ function calculate (age, ageRetire, ageDeath, saved, expenses) {
      let saveAnnual = -1 * Math.round(((rateReturn * (retirementExpenses + x * saved))/(-1 + x)));
 
      // On click show amount needed to save
+     document.querySelector('.results').setAttribute('style', 'display: block');
      document.querySelector('.results').innerHTML = (`You should be saving about <strong><font color="#21BFE1">${saveAnnual.toLocaleString('en-US', { style: 'currency', currency: 'USD', maximumSignificantDigits: 4 })}</font></strong> per year.`);
-     console.log(`And you should save ${saveAnnual} each year.`);
+     // console.log(`And you should save ${saveAnnual} each year.`);
      
 }
 
-// Validate age inputs
-function isValidAge (a) {
-     if (!a) {
-          return false;
-     } else {
-          parseFloat(a);
-          return a;
-     }
-}
-
-// Validate dollar amounts inputs
-function isValidAmount (amt) {
-     if (!amt) {
-          return false;
-     } else if (amt.includes('$') || amt.includes(',')) {
-          amt = amt.replace('$', '');
-          amt = amt.replace(',', '');
-     }
-     parseFloat(amt);
-     return amt;
+// Hide results in case of follow up calculation and error
+function hideResults () {
+     document.querySelector('.results').setAttribute('style', 'display: none');
 }
 
 function reset() {
