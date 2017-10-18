@@ -1,15 +1,29 @@
+// TODO show $ and , in form field
+
 
 // Set rate of inflation and rate of return based on decades-long averages
 const rateReturn = .073;
 const rateInflation = .033;
 
 function eventListeners() {
+     // Simplify testing
      document.addEventListener('DOMContentLoaded', testData);
+     
+     // On Calculate Button, capture data and trigger calculation
      document.getElementById('calculate').addEventListener('click', captureData);
+     
+     // On Enter, capture data and trigger calculation
+     document.addEventListener('keypress', function(event) {
+          if (event.keyCode == 13) {
+               captureData();
+          }
+     });
+     
+     // On Calculate Button, track when form inputs change and trigger calculation
      document.getElementById('calculate').addEventListener('click', secondaryListeners);
-     // TODO Add Enter key to mimic Calculate button
-
 }
+
+
 
 // After initial calc, listen for changes to data and auto-update
 function secondaryListeners() {
@@ -30,7 +44,7 @@ function captureData() {
           this.errorMessage = errorMessage;
           this.isValidNum = function isValidNum () {
                // Basic validation, to return numbers
-               if ((this.val) && (this.val >= 0)) {
+               if ((this.val) || (this.val >= 0)) {
                     this.val = this.val.replace(/[\-|&;\$%@"<>\(\)\+,]/g, '');
                     parseFloat(this.val);
                     return this.val;
@@ -39,7 +53,6 @@ function captureData() {
                }
           }
           this.addErrorDiv = function addErrorDiv () {
-               console.log("called");
                // Create new div with error text
                var errorDiv = document.createElement('div');
                errorDiv.className = ('error');
@@ -55,53 +68,57 @@ function captureData() {
                
      
      // Data for each input including customized error messages
-     var ageObj = new Inputs(document.getElementById('age').value, 'age', 'Hmm, looks like you entered an unexpected age... please take a look and try again.');
+     var ageObj = new Inputs(document.getElementById('age').value, 'age', 'Hmm, are these ages correct? Please take a look and try again.');
      
-     var retireObj = new Inputs(document.getElementById('age-retire').value, 'age-retire', 'Zoikes! This calculator is optimized for folks who will retire in the future. Please check the ages you input.');
+     var retireObj = new Inputs(document.getElementById('age-retire').value, 'age-retire', 'Zoikes! This calculator is optimized for folks who will retire in the future. Please update the ages you input.');
 
      var deathObj = new Inputs(document.getElementById('age-death').value, 'age-death', 'Oh man... This calculator expects you will die AFTER you retire. Please double-check the ages you input.');
 
-     var savedObj = new Inputs(document.getElementById('saved').value, 'saved', 'Whohee, please enter a number... we\'re realistic. We know the amount might be a goose egg.');
+     var savedObj = new Inputs(document.getElementById('saved').value, 'saved', 'Whooheee, please enter a number... And, we know the amount might be zilch.');
 
      var expensesObj = new Inputs(document.getElementById('expenses').value, 'expenses', 'Yowza! We\'re expecting your expenses will be AT LEAST  $6,000 per year... Please try again.');
      
 
      clearError();
      
+     // Track toggle if there are errors in inputs
+     var errorCheck = true;
+     
      // Check if data in each input box is present and valid
      // Then, calculate the result
 
      if (!ageObj.isValidNum()) {
-          console.log(ageObj.errorMessage);
           ageObj.addErrorDiv();
-          hideResults();
-     } else if (!retireObj.isValidNum() || (ageObj.val > retireObj.val)) {
-          console.log(retireObj.errorMessage);
+          errorCheck = false;
+     }
+     if (!retireObj.isValidNum() || (ageObj.val > retireObj.val)) {
           retireObj.addErrorDiv();
-          hideResults();
-     } else if (!deathObj.isValidNum() || (retireObj.val > deathObj.val)) {
-          console.log(deathObj.errorMessage);
+          errorCheck = false;
+     }
+     if (!deathObj.isValidNum() || (retireObj.val > deathObj.val)) {
           deathObj.addErrorDiv();
-          hideResults();
-     } else if (!expensesObj.isValidNum() || (expensesObj.val < 6000)) {
-          console.log(expensesObj.errorMessage);
-          expenseObj.addErrorDiv();
-          hideResults();
-     } else if (!savedObj.isValidNum()) {
-          console.log(savedObj.errorMessage);
+          errorCheck = false;
+     }
+     if (!expensesObj.isValidNum() || (expensesObj.val < 6000)) {
+          expensesObj.addErrorDiv();
+          errorCheck = false;
+     }
+     if (!savedObj.isValidNum()) {
           savedObj.addErrorDiv();
-          hideResults();
+          errorCheck = false;
+     }
      
-     } else {
+     if (errorCheck === true)  {
           console.log(`Age: ${ageObj.val}. Retirement: ${retireObj.val}. Life expectancy: ${deathObj.val}. Saved: ${savedObj.val}. Expenses: ${expensesObj.val}.`);
           calculate(ageObj.val, retireObj.val, deathObj.val, savedObj.val, expensesObj.val);
+     } else {
+          hideResults();
      }
 }
 
 
 // Clear previously shown errors
 function clearError () {
-     console.log("clear error");
      var errorList = document.querySelectorAll('.error');
      for (var i = 0; i < errorList.length; i++) {
           errorList[i].remove();
@@ -153,7 +170,7 @@ function calculate (age, ageRetire, ageDeath, saved, expenses) {
 
 // Hide results in case of follow up calculation and error
 function hideResults () {
-     document.querySelector('.results').setAttribute('style', 'display: none');
+     document.querySelector('.results').setAttribute('style', 'display: none, height: 3em');
 }
 
 function reset() {
@@ -173,8 +190,8 @@ function testData () {
      document.getElementById('age').value = 30;
      document.getElementById('age-retire').value = 65;
      document.getElementById('age-death').value = 85;
-     document.getElementById('saved').value = 0;
-     document.getElementById('expenses').value = 10000;
+     document.getElementById('saved').value = `$0`;
+     document.getElementById('expenses').value = `$10,000`;
 }
 
 
