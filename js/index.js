@@ -1,5 +1,6 @@
-// TODO show $ and , in form field
-
+// Practical Retirement Calculator
+// With 5 inputs, user gets an approximate amount that
+// should be saved annually for retirement 
 
 // Set rate of inflation and rate of return based on decades-long averages
 const rateReturn = .073;
