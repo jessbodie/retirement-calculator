@@ -116,20 +116,10 @@ ol {
      counter-reset: li;
 }
 
-.question-text li {
-     counter-increment: li;
-}
 
-.question-text li::before {
-/*Thanks to great article on coloring numbers differently:*/
-/*https://www.w3.org/Style/Examples/007/color-bullets.en.html*/
-     content: counter(li)". ";
-     margin-left: -1.5em;
-     margin-right: 0.5em;
+.blue {
      color: #21BFE1;
-     display: inline;
-     text-align: right;
-     direction: rtl;
+     display: inline-flex;
 }
 
 
@@ -146,10 +136,24 @@ ol {
      align-items: flex-start;
 }
 
-.blue {
-     color: #21BFE1;
-     display: inline-flex;
+.question-text li {
+     counter-increment: li;
+     width: 100%;
+     position: relative;
 }
+
+.question-text li::before {
+/*Thanks to great article on coloring numbers differently:*/
+/*https://www.w3.org/Style/Examples/007/color-bullets.en.html*/
+     content: counter(li)". ";
+     margin-left: -1.5em;
+     margin-right: 0.5em;
+     color: #21BFE1;
+     display: inline;
+     text-align: right;
+     direction: rtl;
+}
+
 
 input {
      line-height: normal;
@@ -200,16 +204,61 @@ input[type=button]:hover {
      padding-top: 0;
 }
 
+.helper {
+     display: inline-flex;
+     flex: 0 1 auto;
+     color: white;
+     font-weight: bold;
+     font-family: sans-serif;
+     background-color: #21BFE1;
+     font-size: .5em;
+     border-radius: 50%;
+     padding: .4em;
+     margin-left: -.2em;
+     line-height: 70%;
+     vertical-align: super;
+     transition: .5s;
+     opacity: .75;
+     width: 1.5em;
+     height: 1.5em;
+
+}
+
+.helper:hover {
+     background-color:#066e84;
+}
+
+/*///////////////////////////////////////////////////////////////////////////*/
+.helper-text {
+     display: inline-flex;
+     background-color:#bdc0c9;
+     color: #3B3F47;
+     font-weight: lighter;
+     font-size: .6em;
+     line-height: 100%;
+     padding: .5em;
+     border: .5px solid #696E7B;
+     border-radius: 2px;
+     width: 200px;
+     height: auto;
+     position: absolute;
+     top: 24px;
+     right: -50px;
+     opacity: 1;
+     z-index: 10;
+}
+
 
 .results {
+     display: inline-block;
+     visibility: visible;
      width: 100%;
      margin-top: 1em;
      margin-bottom: 1em;
      font-size: 1.15em;
      line-height: 150%;
      color: #3B3F47;
-     display: block;
-     height: 3em;
+     height: 2em;
 }
 
 
