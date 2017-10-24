@@ -1,205 +1,298 @@
 // Practical Retirement Calculator
-// With 5 inputs, user gets an approximate amount that
-// should be saved annually for retirement 
+// With 5 inputs, user gets an approximate amount to save annually for retirement
+// Version 3.0, rewritten with data, ui, app controllers
 
-// Set rate of inflation and rate of return based on decades-long averages
-const rateReturn = .073;
-const rateInflation = .033;
 
-function eventListeners() {
-     // Simplify testing
-     document.addEventListener('DOMContentLoaded', testData);
+
+var dataController = (function() {
      
-     // On Calculate Button, capture data and trigger calculation
-     document.getElementById('calculate').addEventListener('click', captureData);
+
+     var data = {
+          inputs: [
+               {val: '', elementID: 'age', errorMessage: 'Hmm, are these ages correct? Please take a look and try again.', isValid: false},
+               {val: '', elementID: 'age-retire', errorMessage: 'Zoikes! This calculator is optimized for folks who will retire in the future. Please update the ages you input.', helperText: 'Full Social Security benefits kick in at age 67 for people born in 1960 or later.', isValid: false},
+               {val: '', elementID: 'age-death', errorMessage: 'Oh man... This calculator expects you will die AFTER you retire. Please double-check the ages you input.', helperText: 'According to the CDC, the average life expectancy for residents of the U.S. is 78.8 years.', isValid: false},
+               {val: '', elementID: 'saved', errorMessage: 'Whooheee, please enter a number... And, we know the amount might be zilch.', isValid: false},
+               {val: '', elementID: 'expenses', errorMessage: 'Yowza! We\'re expecting your expenses will be AT LEAST  $6,000 per year... Please try again.', isValid: false}
+          ],
+          rateReturn: .073,
+          rateInflation: .033,
+          saveAnnual: 0
+     };
+
      
-     // On Enter, capture data and trigger calculation
-     document.addEventListener('keypress', function(event) {
-          if (event.keyCode == 13) {
-               captureData();
+     return {
+
+          // Get and return the 5 data inputs
+          getDataFromForm: function(inputObj) {
+               for (let i = 0; i < inputObj.inputBoxes.length; i++) {
+                    // Check that data input boxes match data object and store
+                    if (inputObj.inputBoxes[i].id === data.inputs[i].elementID) {
+                         data.inputs[i].val = inputObj.inputBoxes[i].value;
+                    } else {
+                         // TODO
+                         console.log("Check the getDataFromForm function. The IDs aren't matching.");
+                    }
+               }
+               return {
+                    inputs: data.inputs
+               };
+          },
+          
+          // Validation: Strip characters, check for null and greater than 0. Return numbers.
+          validateInputs: function(inputsToUpdate) {
+               for (let i = 0; i < inputsToUpdate.length; i++) {
+                    inputsToUpdate[i].val = String(inputsToUpdate[i].val);
+                    inputsToUpdate[i].val = inputsToUpdate[i].val.replace(/[\-|&;\$%@"<>\(\)\+,]/g, '');
+                    inputsToUpdate[i].val = parseFloat(inputsToUpdate[i].val);
+
+                    if (inputsToUpdate[i].val >= 0) {
+                         inputsToUpdate[i].isValid = true;
+                    } else {
+                         inputsToUpdate[i].isValid = false;
+                         console.log(inputsToUpdate[i]);
+                         console.log("is set to false.");
+                    }
+               }
+
+               // TODO Improve to pass 3 specific values rather than array #
+               
+               // Check if age is over retirement age
+               if (inputsToUpdate[0].val > inputsToUpdate[1].val) {
+                    inputsToUpdate[0].isValid = false;
+                    inputsToUpdate[1].isValid = false;
+               }
+
+               if (inputsToUpdate[1].val > inputsToUpdate[2].val) {
+                    inputsToUpdate[2].isValid = false;
+               }
+
+               if (inputsToUpdate[4].val > 6000) {
+                    inputsToUpdate[4].isValid = true;
+               }
+
+               return inputsToUpdate;
+          },
+
+
+          // Calculation for how much to save annually
+          calculateToSave: function(age, ageRetire, ageDeath, saved, expenses) {
+               // Calc time periods in preparation for the PV and FV calcs
+               let yearsUntilRetirement = ageRetire - age;
+               let yearsWithdrawing = ageDeath - ageRetire;
+          
+               // Interim calcs of rate over periods to simplify PV and PMT formulas
+               let x = Math.pow(1 + data.rateReturn, yearsUntilRetirement);
+               const nper = 1;
+               let z = Math.pow(1 + data.rateReturn, -nper);
+               let y = Math.pow(1 + data.rateReturn, nper);
+               
+               // Iniviate key calc variables
+               let retirementExpenses = saved;
+               let pv;
+               let fv = 0;
+               
+               // Calc expenses during retirement years
+               for (var i = ageDeath-1; i >= ageRetire; i--) {
+                    // Calc FV of costs each year
+                    // Formula for fv = pv * (1 + (rate / freq))^periods
+                    fv = expenses * Math.pow((1 + (data.rateInflation / 1)),(i - age));
+                    
+                    // Calculate PV needed to cover future costs
+                    // Thanks for the PV formula: http://www.mohaniyer.com/old/pvcode.htm
+                    pv = - ( z * (-1 * retirementExpenses * data.rateReturn - fv + y * fv )) / data.rateReturn;
+                    
+                    retirementExpenses = pv;
+                    //console.log(`counter is: ${i-age} and fv is: ${fv} and pv is ${pv}`);
+               }
+               
+               
+               // Calculate annual PMT amount to save to cover future expenses
+               data.saveAnnual = -1 * Math.round(((data.rateReturn * (retirementExpenses + x * saved))/(-1 + x)));
+               data.saveAnnual = data.saveAnnual.toLocaleString('en-US', { style: 'currency', currency: 'USD', maximumSignificantDigits: 4 });
+          
+               return data.saveAnnual;
           }
-     });
+
+     };
+})();
+
+var UIController = (function() {
+
      
-     // On Calculate Button, track when form inputs change and trigger calculation
-     document.getElementById('calculate').addEventListener('click', secondaryListeners);
-}
+     return {
+          // Get the list of input boxes
+          getInputList: function() {
+               return {
+                    inputBoxes: document.querySelectorAll('.entry-box')
+               };
+          },
+          
+          // Show the helper icons for the objects that have helper text
+          displayHelper: function(dataInputs) {
+               var helperIcon = [];
+               for (let i = 0; i < dataInputs.inputs.length; i++) {
+                    if (dataInputs.inputs[i].helperText) {
+                         // Create helper icon div
+                         helperIcon[i] = document.createElement('div');
+                         helperIcon[i].className = ('helper');
+                         var helperIconText = document.createTextNode('?');
+                         helperIcon[i].appendChild(helperIconText); // Add the text node to the newly created div.
+                         
+                         // Insert helper div on question that has the helper text
+                         var helperDivParent = document.getElementById(dataInputs.inputs[i].elementID).parentNode.childNodes[1].childNodes[1];
+                         helperDivParent.appendChild(helperIcon[i]);
 
+                         // Listener to show helper text on hover
+                         helperIcon[i].addEventListener('mouseenter', function() {
 
+                              // Create div with class and text associated
+                              var helperHoverDiv = document.createElement('div');
+                              helperHoverDiv.className = ('helper-text');
+                              var helperTextDiv = document.createTextNode(dataInputs.inputs[i].helperText);
+                              helperHoverDiv.appendChild(helperTextDiv); //add the text node to the newly created div.
+               
+                              // Place new HELPER div under corresponding field
+                              //////////////////////////////
+                              helperIcon[i].parentNode.appendChild(helperHoverDiv);
+                                   
+                         });
+                         
+                         // Listener to hide helper text on leave
+                         helperIcon[i].addEventListener('mouseleave', function() {
+                              document.querySelector('.helper-text').remove();
+                         });                    }
+               }
+          },
+               
+          // Displan new error div when data is not valid
+          displayErrors: function(inputs) {
+               for (i = 0; i < inputs.length; i++) {
+                    if (inputs[i].isValid === false) {
 
-// After initial calc, listen for changes to data and auto-update
-function secondaryListeners() {
-     var questionList = document.querySelectorAll('.entry-box');
-     for (var i = 0; i < questionList.length; i++) {
-          questionList[i].addEventListener('change', captureData);
-     }
-}
+                         // Create new div with error text
+                         var errorDiv = document.createElement('div');
+                         errorDiv.className = ('error');
+                         var errorMessDiv = document.createTextNode(inputs[i].errorMessage);
+                         errorDiv.appendChild(errorMessDiv); //add the text node to the newly created div.
+                    
+                         // Place new error div under corresponding field
+                         var errorDivCurrent = document.getElementById(inputs[i].elementID).parentNode.parentNode;
+                         var errorDivNext = document.getElementById(inputs[i].elementID).parentNode.nextElementSibling;
+                         errorDivCurrent.insertBefore(errorDiv, errorDivNext);
+                    }
+               }
+               for (i = 0; i < inputs.length; i++) {
+                    if (inputs[i].isValid === false) {
+                         return false;
+                    }
+               }
+               return true;
+          },
 
+          // Display the amount to save restuls
+          displayToSave: function(toSave) {
+               // On click show amount needed to save
+               document.querySelector('.results').setAttribute('style', 'visibility: visible');
+               document.querySelector('.results').innerHTML = (`You should be saving about <strong><font color="#21BFE1">${toSave}</font></strong> per year.`);
+          },
 
-// Capture data user entered and  error handling
-function captureData() {
-     
-     // Object to store for each input
-     function Inputs(val, elementID, errorMessage, isValid) {
-          this.val = val;
-          this.elementID = elementID;
-          this.errorMessage = errorMessage;
-          this.isValidNum = function isValidNum () {
-               // Basic validation, to return numbers
-               if ((this.val) || (this.val >= 0)) {
-                    this.val = this.val.replace(/[\-|&;\$%@"<>\(\)\+,]/g, '');
-                    parseFloat(this.val);
-                    return this.val;
-               } else {
-                    return false;
+          clearError: function() {
+               var errorList = document.querySelectorAll('.error');
+               for (let i = 0; i < errorList.length; i++) {
+                    errorList[i].remove();
+               }
+          },
+          
+          hideResults: function() {
+               document.querySelector('.results').setAttribute('style', 'visibility: hidden');
+          },
+          
+          clearFields: function () {
+               let questionList = document.querySelectorAll('.entry-box');
+               for (let i = 0; i < questionList.length; i++) {
+                    questionList[i].addEventListener('click', function() {
+                              questionList[i].value = "";
+                    });
                }
           }
-          this.addErrorDiv = function addErrorDiv () {
-               // Create new div with error text
-               var errorDiv = document.createElement('div');
-               errorDiv.className = ('error');
-               var errorMessDiv = document.createTextNode(this.errorMessage);
-               errorDiv.appendChild(errorMessDiv); //add the text node to the newly created div.
+
+     };
+})();
+
+
+// Global controller
+var controller = (function(UICtrl, dataCtrl) {
+
+     // Array of input boxes
+     var inputs = UICtrl.getInputList();
+     
+     var calculate = function() {
+          // Clear any previous errors
+          UICtrl.clearError();
+          UICtrl.hideResults();
           
-               // Place new error div under corresponding field
-               var errorDivCurrent = document.getElementById(this.elementID).parentNode.parentNode;
-               var errorDivNext = document.getElementById(this.elementID).parentNode.nextElementSibling;
-               errorDivCurrent.insertBefore(errorDiv, errorDivNext);
+          // Ingest values from array of input boxes
+          var fullData = dataCtrl.getDataFromForm(inputs);
+
+          // Validate the inputted data and return updated
+          fullData.inputs = dataCtrl.validateInputs(fullData.inputs);
+          
+          if (UICtrl.displayErrors(fullData.inputs)) {
+
+               // Calculate how much to save
+               var amtToSave = dataCtrl.calculateToSave(fullData.inputs[0].val, fullData.inputs[1].val, fullData.inputs[2].val, fullData.inputs[3].val, fullData.inputs[4].val);
+               // Display how much to save
+               UICtrl.displayToSave(amtToSave);
+          } else {
+               UICtrl.hideResults();
           }
      };
-               
      
-     // Data for each input including customized error messages
-     var ageObj = new Inputs(document.getElementById('age').value, 'age', 'Hmm, are these ages correct? Please take a look and try again.');
-     
-     var retireObj = new Inputs(document.getElementById('age-retire').value, 'age-retire', 'Zoikes! This calculator is optimized for folks who will retire in the future. Please update the ages you input.');
-
-     var deathObj = new Inputs(document.getElementById('age-death').value, 'age-death', 'Oh man... This calculator expects you will die AFTER you retire. Please double-check the ages you input.');
-
-     var savedObj = new Inputs(document.getElementById('saved').value, 'saved', 'Whooheee, please enter a number... And, we know the amount might be zilch.');
-
-     var expensesObj = new Inputs(document.getElementById('expenses').value, 'expenses', 'Yowza! We\'re expecting your expenses will be AT LEAST  $6,000 per year... Please try again.');
-     
-
-     clearError();
-     
-     // Track toggle if there are errors in inputs
-     var errorCheck = true;
-     
-     // Check if data in each input box is present and valid
-     // Then, calculate the result
-
-     if (!ageObj.isValidNum()) {
-          ageObj.addErrorDiv();
-          errorCheck = false;
-     }
-     if (!retireObj.isValidNum() || (ageObj.val > retireObj.val)) {
-          retireObj.addErrorDiv();
-          errorCheck = false;
-     }
-     if (!deathObj.isValidNum() || (retireObj.val > deathObj.val)) {
-          deathObj.addErrorDiv();
-          errorCheck = false;
-     }
-     if (!expensesObj.isValidNum() || (expensesObj.val < 6000)) {
-          expensesObj.addErrorDiv();
-          errorCheck = false;
-     }
-     if (!savedObj.isValidNum()) {
-          savedObj.addErrorDiv();
-          errorCheck = false;
-     }
-     
-     if (errorCheck === true)  {
-          console.log(`Age: ${ageObj.val}. Retirement: ${retireObj.val}. Life expectancy: ${deathObj.val}. Saved: ${savedObj.val}. Expenses: ${expensesObj.val}.`);
-          calculate(ageObj.val, retireObj.val, deathObj.val, savedObj.val, expensesObj.val);
-     } else {
-          hideResults();
-     }
-}
-
-
-// Clear previously shown errors
-function clearError () {
-     var errorList = document.querySelectorAll('.error');
-     for (var i = 0; i < errorList.length; i++) {
-          errorList[i].remove();
-     }
-}
-
-
-
-function calculate (age, ageRetire, ageDeath, saved, expenses) {
-     // Calc time periods in preparation for the PV and FV calcs
-     let yearsUntilRetirement = ageRetire - age;
-     let yearsWithdrawing = ageDeath - ageRetire;
-
-     // Interim calcs of rate over periods to simplify PV and PMT formulas
-     let x = Math.pow(1 + rateReturn, yearsUntilRetirement);
-     const nper = 1;
-     let z = Math.pow(1 + rateReturn, -nper);
-     let y = Math.pow(1 + rateReturn, nper);
-     
-     // Iniviate key calc variables
-     let retirementExpenses = saved;
-     let pv;
-     let fv = 0;
-     
-     // Calc expenses during retirement years
-     for (var i = ageDeath-1; i >= ageRetire; i--) {
-          // Calc FV of costs each year
-          // Formula for fv = pv * (1 + (rate / freq))^periods
-          fv = expenses * Math.pow((1 + (rateInflation / 1)),(i - age));
+     var setupEventListeners = function(questionList, data) {
+          // On load, show helper icons
+          document.addEventListener('DOMContentLoaded', function(){
+               var origData = dataCtrl.getDataFromForm(inputs);
+               UICtrl.displayHelper(origData);
+          });
           
-          // Calculate PV needed to cover future costs
-          // Thanks for the PV formula: http://www.mohaniyer.com/old/pvcode.htm
-          pv = - ( z * (-1 * retirementExpenses * rateReturn - fv + y * fv )) / rateReturn;
+          // On Calculate Button, capture data and trigger calculation
+          document.getElementById('calculate').addEventListener('click', calculate);
           
-          retirementExpenses = pv;
-          //console.log(`counter is: ${i-age} and fv is: ${fv} and pv is ${pv}`);
+          // On Enter, capture data and trigger calculation
+          document.addEventListener('keypress', function(event) {
+               if (event.keyCode == 13) {
+                    calculate();
+               }
+          });
+          
+          // On click of field, clear for new data
+          document.addEventListener('DOMContentLoaded', UICtrl.clearFields);
+          
+          // Listen if changes on text fields, then calculate
+          for (var i = 0; i < questionList.inputBoxes.length; i++) {
+               questionList.inputBoxes[i].addEventListener('change', calculate);
+               }
+
      }
+
+
+     return {
+          init: function() {
+               console.log("started the init function");
+               setupEventListeners(UICtrl.getInputList());
+          }
+          
+          
+
+     };
      
-     
-     // Calculate annual PMT amount to save to cover future expenses
-     let saveAnnual = -1 * Math.round(((rateReturn * (retirementExpenses + x * saved))/(-1 + x)));
+})(UIController, dataController);
 
-     // On click show amount needed to save
-     document.querySelector('.results').setAttribute('style', 'display: block');
-     document.querySelector('.results').innerHTML = (`You should be saving about <strong><font color="#21BFE1">${saveAnnual.toLocaleString('en-US', { style: 'currency', currency: 'USD', maximumSignificantDigits: 4 })}</font></strong> per year.`);
-     // console.log(`And you should save ${saveAnnual} each year.`);
-     
-}
-
-// Hide results in case of follow up calculation and error
-function hideResults () {
-     document.querySelector('.results').setAttribute('style', 'display: none, height: 3em');
-}
-
-function reset() {
-     document.getElementById('age').value = "";
-     document.getElementById('age-retire').value = "";
-     document.getElementById('age-death').value="";
-     document.getElementById('saved').value="$";
-     document.getElementById('expenses').value="$";
-}
+controller.init();
 
 
-function test () {
-     console.log("test");
-}
-
-function testData () {
-     document.getElementById('age').value = 30;
-     document.getElementById('age-retire').value = 65;
-     document.getElementById('age-death').value = 85;
-     document.getElementById('saved').value = `$0`;
-     document.getElementById('expenses').value = `$10,000`;
-}
-
-
-eventListeners();
-
-
-
+///////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////
 // Key Formulas to port from 2013 JAVA and Excel versions:
 // Excel FV: interest_rate, number_payments, payment, PV, Type
