@@ -153,7 +153,6 @@ var UIController = (function() {
                               helperHoverDiv.appendChild(helperTextDiv); //add the text node to the newly created div.
                
                               // Place new HELPER div under corresponding field
-                              //////////////////////////////
                               helperIcon[i].parentNode.appendChild(helperHoverDiv);
                                    
                          });
@@ -227,6 +226,7 @@ var controller = (function(UICtrl, dataCtrl) {
      // Array of input boxes
      var inputs = UICtrl.getInputList();
      
+     // When user clicks calculate button, show calculation
      var calculate = function() {
           // Clear any previous errors
           UICtrl.clearError();
@@ -247,6 +247,7 @@ var controller = (function(UICtrl, dataCtrl) {
           } else {
                UICtrl.hideResults();
           }
+     
      };
      
      var setupEventListeners = function(questionList, data) {
@@ -258,22 +259,27 @@ var controller = (function(UICtrl, dataCtrl) {
           
           // On Calculate Button, capture data and trigger calculation
           document.getElementById('calculate').addEventListener('click', calculate);
+
+          // Listen if changes on text fields, then calculate
+          document.getElementById('calculate').addEventListener('click', calcOnChange);
           
           // On Enter, capture data and trigger calculation
           document.addEventListener('keypress', function(event) {
                if (event.keyCode == 13) {
                     calculate();
+                    calcOnChange();
                }
           });
+          
+          function calcOnChange () {
+               for (var i = 0; i < questionList.inputBoxes.length; i++) {
+                    questionList.inputBoxes[i].addEventListener('change', calculate);
+               }
+          }
           
           // On click of field, clear for new data
           document.addEventListener('DOMContentLoaded', UICtrl.clearFields);
           
-          // Listen if changes on text fields, then calculate
-          for (var i = 0; i < questionList.inputBoxes.length; i++) {
-               questionList.inputBoxes[i].addEventListener('change', calculate);
-               }
-
      }
 
 

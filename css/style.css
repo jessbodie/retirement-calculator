@@ -163,13 +163,18 @@ input {
      font-family: 'Montserrat', sans-serif;
      font-style: normal;
      box-shadow: 0 0 0 1px #bdc0c9;
+     float:right;
+     background-color:white;
 }
 
 input[type=text] {
-     background-color:white;
-     float:right;
-     box-shadow: 0 0 0 1px #bdc0c9;
+     width: 90px;
 }
+
+input[type=number] {
+     width: 60px;
+}
+
 
 input[type=text]:focus {
      box-shadow: 0 0 0 1.5px #066e84;
@@ -228,7 +233,7 @@ input[type=button]:hover {
      background-color:#066e84;
 }
 
-/*///////////////////////////////////////////////////////////////////////////*/
+
 .helper-text {
      display: inline-flex;
      background-color:#bdc0c9;
