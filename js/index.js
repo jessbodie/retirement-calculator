@@ -119,7 +119,6 @@ var dataController = (function() {
 
 var UIController = (function() {
 
-     
      return {
           // Get the list of input boxes
           getInputList: function() {
@@ -144,23 +143,35 @@ var UIController = (function() {
                          helperDivParent.appendChild(helperIcon[i]);
 
                          // Listener to show helper text on hover
-                         helperIcon[i].addEventListener('mouseenter', function() {
+                         helperIcon[i].addEventListener('mouseenter', displayHelperText);
+                         helperIcon[i].addEventListener('click', displayHelperText);
+                         helperIcon[i].addEventListener('touchstart', displayHelperText);
 
+                         // Listener to hide helper text on leave
+                         helperIcon[i].addEventListener('mouseleave', removeHelperText);
+                         
+                         function displayHelperText() {
+                         
                               // Create div with class and text associated
                               var helperHoverDiv = document.createElement('div');
                               helperHoverDiv.className = ('helper-text');
                               var helperTextDiv = document.createTextNode(dataInputs.inputs[i].helperText);
                               helperHoverDiv.appendChild(helperTextDiv); //add the text node to the newly created div.
-               
+                         
                               // Place new HELPER div under corresponding field
                               helperIcon[i].parentNode.appendChild(helperHoverDiv);
-                                   
-                         });
+                              
+                              // For mobile, user clicks helper text to hide it
+                              helperHoverDiv.addEventListener('click', removeHelperText);
+
+                         }
                          
-                         // Listener to hide helper text on leave
-                         helperIcon[i].addEventListener('mouseleave', function() {
+                         function removeHelperText () {
                               document.querySelector('.helper-text').remove();
-                         });                    }
+                         }
+
+                         
+                    }
                }
           },
                
