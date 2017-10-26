@@ -231,6 +231,7 @@ input[type=button]:hover {
 
 .helper:hover {
      background-color:#066e84;
+     cursor: pointer;
 }
 
 
@@ -238,6 +239,7 @@ input[type=button]:hover {
      display: inline-flex;
      background-color:#bdc0c9;
      color: #3B3F47;
+     cursor: pointer;
      font-weight: lighter;
      font-size: .6em;
      line-height: 100%;
