@@ -300,15 +300,19 @@ var controller = (function(UICtrl, dataCtrl) {
           // On click of field, clear for new data
           document.addEventListener('DOMContentLoaded', UICtrl.clearFields);
           
-          // For mobile
-          if (window.innerWidth < 600) {
-               // Convert the two Dollar Amount fields
-               document.querySelector('form').addEventListener('click', function() {
+          var neverConverted = true;
+          
+
+          // Convert the two Dollar Amount fields
+          document.querySelector('form').addEventListener('click', function() {
+               // For mobile only and first time only
+               if ((window.innerWidth < 600) && (neverConverted)) {
                     inputs.inputBoxes[3] = UICtrl.convertFieldType(inputs.inputBoxes[3]);
                     inputs.inputBoxes[4] = UICtrl.convertFieldType(inputs.inputBoxes[4]);
-               });
-          }
-          
+                    neverConverted = false;
+                    return neverConverted;
+               }
+          });
      }
 
 
@@ -326,8 +330,9 @@ var controller = (function(UICtrl, dataCtrl) {
 
 controller.init();
 
-// TODO How to handle the two money fields. Treat as number inputs?
 
+// TODO
+// Improve UX of hint icons on mobile
 
 ///////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////
