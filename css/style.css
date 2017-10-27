@@ -167,16 +167,16 @@ input {
      background-color:white;
 }
 
-input[type=text] {
+.dollar {
      width: 90px;
 }
 
-input[type=number] {
+.age {
      width: 60px;
 }
 
 
-input[type=text]:focus {
+input[type=number]:focus {
      box-shadow: 0 0 0 1.5px #066e84;
      outline: none;
 }

@@ -175,6 +175,15 @@ var UIController = (function() {
                }
           },
                
+          // Convert field to Num type and styling
+          convertFieldType: function(inputBox) {
+               inputBox.value = '';
+               inputBox.className += ' dollar';
+               inputBox.type = 'number';
+               
+               return inputBox;
+          },
+               
           // Displan new error div when data is not valid
           displayErrors: function(inputs) {
                for (i = 0; i < inputs.length; i++) {
@@ -236,7 +245,7 @@ var controller = (function(UICtrl, dataCtrl) {
 
      // Array of input boxes
      var inputs = UICtrl.getInputList();
-     
+
      // When user clicks calculate button, show calculation
      var calculate = function() {
           // Clear any previous errors
@@ -291,6 +300,15 @@ var controller = (function(UICtrl, dataCtrl) {
           // On click of field, clear for new data
           document.addEventListener('DOMContentLoaded', UICtrl.clearFields);
           
+          // For mobile
+          if (window.innerWidth < 600) {
+               // Convert the two Dollar Amount fields
+               document.querySelector('form').addEventListener('click', function() {
+                    inputs.inputBoxes[3] = UICtrl.convertFieldType(inputs.inputBoxes[3]);
+                    inputs.inputBoxes[4] = UICtrl.convertFieldType(inputs.inputBoxes[4]);
+               });
+          }
+          
      }
 
 
@@ -307,6 +325,8 @@ var controller = (function(UICtrl, dataCtrl) {
 })(UIController, dataController);
 
 controller.init();
+
+// TODO How to handle the two money fields. Treat as number inputs?
 
 
 ///////////////////////////////////////////////////////////////
