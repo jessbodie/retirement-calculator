@@ -146,6 +146,7 @@ var UIController = (function() {
                          helperIcon[i].addEventListener('mouseenter', displayHelperText);
                          helperIcon[i].addEventListener('click', displayHelperText);
                          helperIcon[i].addEventListener('touchstart', displayHelperText);
+                         helperIcon[i].addEventListener('pointerdown', displayHelperText);
 
                          // Listener to hide helper text on leave
                          helperIcon[i].addEventListener('mouseleave', removeHelperText);
@@ -331,8 +332,6 @@ var controller = (function(UICtrl, dataCtrl) {
 controller.init();
 
 
-// TODO
-// Improve UX of hint icons on mobile
 
 ///////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////
