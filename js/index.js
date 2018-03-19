@@ -213,7 +213,7 @@ var UIController = (function() {
           // Display the amount to save restuls
           displayToSave: function(toSave) {
                // On click show amount needed to save
-               document.querySelector('.results').setAttribute('style', 'visibility: visible');
+               document.querySelector('.results').setAttribute('style', 'display: block;');
                document.querySelector('.results').innerHTML = (`You should be saving about <strong><font color="#21BFE1">${toSave}</font></strong> per year.`);
           },
 

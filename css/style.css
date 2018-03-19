@@ -83,7 +83,7 @@ h2 {
 }
 
 .learn {
-     margin-top: 0;
+     margin-top: 2em;
      margin-bottom: 0;
      font-size: .9em;
      color: #3B3F47;
@@ -175,6 +175,15 @@ input {
      width: 60px;
 }
 
+/* Hide up down arrow in Firefox */
+input[type=number] {
+  -moz-appearance:textfield;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+}
 
 input[type=number]:focus {
      box-shadow: 0 0 0 1.5px #066e84;
@@ -257,11 +266,11 @@ input[type=button]:hover {
 
 
 .results {
-     display: inline-block;
-     visibility: visible;
+     display: none;
+     /* visibility: visible; */
      width: 100%;
      margin-top: 1em;
-     margin-bottom: 1em;
+     margin-bottom: 0;
      font-size: 1.15em;
      line-height: 150%;
      color: #3B3F47;
